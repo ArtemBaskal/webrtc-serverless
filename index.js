@@ -54,6 +54,12 @@ offerRecdBtn.addEventListener('click', async () => {
     await bobPeerConnection.setLocalDescription(answerDesc)
 });
 
+joinBtn.addEventListener('click', async () => {
+    const mediaStream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
+    remoteVideo.srcObject = mediaStream;
+
+    bobPeerConnection.addStream(mediaStream);
+});
 
 remoteOfferInput.addEventListener('change', () => {
     const [file] = remoteOfferInput.files;
