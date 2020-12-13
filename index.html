@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>WebRTC</title>
+    <script src="index.js" defer></script>
+</head>
+<body>
+<h3>Create a room</h3>
+<button id="createBtn">ALICE: Create</button>
+<hr>
+<h3>ALICE: Send your local offer to BOB</h3>
+<textarea id="localOffer"></textarea>
+<br>
+<h3>Then, paste the "answer" you received</h3>
+<textarea id="remoteAnswer"></textarea>
+<br>
+<br>
+<button id="answerRecdBtn">Okay, I pasted it.</button>
+<hr>
+<h3>BOB: Paste the "offer" you received</h3>
+<textarea id="remoteOffer"></textarea>
+<br>
+<br>
+<button id="offerRecdBtn">Okay, I pasted it.</button>
+<h3>Then, send your local answer to ALICE</h3>
+<textarea id="localAnswer"></textarea>
+<hr>
+<div>ALICE</div>
+<video id="localVideo" autoplay playsinline></video>
+<div>BOB</div>
+<video id="remoteVideo" autoplay playsinline></video>
+</body>
+</html>
