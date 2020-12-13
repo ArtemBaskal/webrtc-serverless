@@ -1,7 +1,7 @@
 const mediaStreamConstraints = {audio: true, video: {width: 640, height: 360}};
 const cfg = {
     'iceServers': [
-        {'url': "stun:stun.l.google.com:19302"},
+        {url: 'stun:stun.l.google.com:19302'},
         {url: 'stun:stun1.l.google.com:19302'},
         {url: 'stun:stun2.l.google.com:19302'},
         {url: 'stun:stun3.l.google.com:19302'},
@@ -13,6 +13,7 @@ const alicePeerConnection = new RTCPeerConnection(cfg);
 const bobPeerConnection = new RTCPeerConnection(cfg);
 
 alicePeerConnection.addEventListener('icecandidate', (e) => {
+    /* FIXME test this */
     const offer = e.candidate == null ? alicePeerConnection.localDescription : e.currentTarget.localDescription;
 
     localOffer.value = JSON.stringify(offer);
@@ -20,6 +21,7 @@ alicePeerConnection.addEventListener('icecandidate', (e) => {
 });
 
 bobPeerConnection.addEventListener('icecandidate', (e) => {
+    /* FIXME test this */
     const answer = e.candidate == null ? bobPeerConnection.localDescription : e.currentTarget.localDescription;
 
     localAnswer.value = JSON.stringify(answer);
@@ -48,8 +50,12 @@ createBtn.addEventListener('click', async () => {
 
 answerRecdBtn.addEventListener('click', () => {
     const answer = remoteAnswer.value;
-    const answerDesc = new RTCSessionDescription(JSON.parse(answer))
-    alicePeerConnection.setRemoteDescription(answerDesc);
+    try {
+        const answerDesc = new RTCSessionDescription(JSON.parse(answer))
+        alicePeerConnection.setRemoteDescription(answerDesc);
+    } catch (e) {
+        console.error(e);
+    }
 })
 
 offerRecdBtn.addEventListener('click', async () => {
