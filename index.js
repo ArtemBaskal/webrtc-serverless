@@ -1,21 +1,29 @@
 const mediaStreamConstraints = {audio: true, video: {width: 640, height: 360}};
-const cfg = {'iceServers': [{'url': "stun:stun.l.google.com:19302"}]};
+const cfg = {
+    'iceServers': [
+        {'url': "stun:stun.l.google.com:19302"},
+        {url: 'stun:stun1.l.google.com:19302'},
+        {url: 'stun:stun2.l.google.com:19302'},
+        {url: 'stun:stun3.l.google.com:19302'},
+        {url: 'stun:stun4.l.google.com:19302'},
+    ]
+};
 
 const alicePeerConnection = new RTCPeerConnection(cfg);
 const bobPeerConnection = new RTCPeerConnection(cfg);
 
 alicePeerConnection.addEventListener('icecandidate', (e) => {
-    if (e.candidate == null) {
-        localOffer.value = JSON.stringify(alicePeerConnection.localDescription);
-        localOfferDownload.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(localOffer.value);
-    }
+    const offer = e.candidate == null ? alicePeerConnection.localDescription : e.currentTarget.localDescription;
+
+    localOffer.value = JSON.stringify(offer);
+    localOfferDownload.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(localOffer.value);
 });
 
 bobPeerConnection.addEventListener('icecandidate', (e) => {
-    if (e.candidate == null) {
-        localAnswer.value = JSON.stringify(bobPeerConnection.localDescription);
-        remoteOfferDownload.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(localAnswer.value);
-    }
+    const answer = e.candidate == null ? bobPeerConnection.localDescription : e.currentTarget.localDescription;
+
+    localAnswer.value = JSON.stringify(answer);
+    remoteOfferDownload.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(localAnswer.value);
 });
 
 const gotLocalMediaStream = (event) => {
@@ -27,7 +35,6 @@ const gotRemoteMediaStream = (event) => {
 };
 
 alicePeerConnection.addEventListener('addstream', gotLocalMediaStream);
-
 bobPeerConnection.addEventListener('addstream', gotRemoteMediaStream);
 
 createBtn.addEventListener('click', async () => {
@@ -51,6 +58,7 @@ offerRecdBtn.addEventListener('click', async () => {
     await bobPeerConnection.setRemoteDescription(offerDesc)
 
     const mediaStream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
+    /* FIXME camera display for Alice */
     bobPeerConnection.addStream(mediaStream);
 
     const answerDesc = await bobPeerConnection.createAnswer();
