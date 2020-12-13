@@ -50,15 +50,13 @@ offerRecdBtn.addEventListener('click', async () => {
     const offer = remoteOffer.value;
     const offerDesc = new RTCSessionDescription(JSON.parse(offer))
     await bobPeerConnection.setRemoteDescription(offerDesc)
+
+    const mediaStream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
+    localVideo.srcObject = mediaStream;
+    bobPeerConnection.addStream(mediaStream);
+
     const answerDesc = await bobPeerConnection.createAnswer();
     await bobPeerConnection.setLocalDescription(answerDesc)
-});
-
-joinBtn.addEventListener('click', async () => {
-    const mediaStream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
-    remoteVideo.srcObject = mediaStream;
-
-    bobPeerConnection.addStream(mediaStream);
 });
 
 remoteOfferInput.addEventListener('change', () => {
