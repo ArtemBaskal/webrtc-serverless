@@ -7,18 +7,26 @@ const bobPeerConnection = new RTCPeerConnection(cfg);
 alicePeerConnection.addEventListener('icecandidate', (e) => {
     if (e.candidate == null) {
         localOffer.value = JSON.stringify(alicePeerConnection.localDescription);
+        localOfferDownload.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(localOffer.value);
     }
 });
 
 bobPeerConnection.addEventListener('icecandidate', (e) => {
     if (e.candidate == null) {
         localAnswer.value = JSON.stringify(bobPeerConnection.localDescription);
+        remoteOfferDownload.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(localAnswer.value);
     }
 });
+
+const gotLocalMediaStream = (event) => {
+    localVideo.srcObject = event.stream;
+};
 
 const gotRemoteMediaStream = (event) => {
     remoteVideo.srcObject = event.stream;
 };
+
+alicePeerConnection.addEventListener('addstream', gotLocalMediaStream);
 
 bobPeerConnection.addEventListener('addstream', gotRemoteMediaStream);
 
@@ -45,3 +53,31 @@ offerRecdBtn.addEventListener('click', async () => {
     const answerDesc = await bobPeerConnection.createAnswer();
     await bobPeerConnection.setLocalDescription(answerDesc)
 });
+
+
+remoteOfferInput.addEventListener('change', () => {
+    const [file] = remoteOfferInput.files;
+
+    if (file) {
+        const reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = (evt) => {
+            remoteOffer.value = evt.target.result;
+            offerRecdBtn.click();
+        }
+    }
+})
+
+remoteAnswerInput.addEventListener('change', () => {
+    const [file] = remoteAnswerInput.files;
+
+    if (file) {
+        const reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = (evt) => {
+            remoteAnswer.value = evt.target.result;
+            answerRecdBtn.click();
+        }
+    }
+})
+
