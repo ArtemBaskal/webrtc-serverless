@@ -32,9 +32,8 @@ bobPeerConnection.addEventListener('addstream', gotRemoteMediaStream);
 
 createBtn.addEventListener('click', async () => {
     const mediaStream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
-    localVideo.srcObject = mediaStream;
-
     alicePeerConnection.addStream(mediaStream);
+    localVideo.srcObject = mediaStream;
 
     const desc = await alicePeerConnection.createOffer();
     await alicePeerConnection.setLocalDescription(desc)
@@ -52,7 +51,6 @@ offerRecdBtn.addEventListener('click', async () => {
     await bobPeerConnection.setRemoteDescription(offerDesc)
 
     const mediaStream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
-    localVideo.srcObject = mediaStream;
     bobPeerConnection.addStream(mediaStream);
 
     const answerDesc = await bobPeerConnection.createAnswer();
