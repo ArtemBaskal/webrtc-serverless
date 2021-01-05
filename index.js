@@ -25,6 +25,7 @@ const ws = new WebSocket("wss://wss-signaling.herokuapp.com/");
 const REQUEST_TYPE_TO_CALLBACK_MAP = {
     offer: (data) => {
         remoteOffer.value = data;
+        remoteSection.style.display = 'block';
         // offerRecdBtn.click();
     },
     answer: (data) => {
@@ -46,7 +47,6 @@ alicePeerConnection.addEventListener('icecandidate', (e) => {
     const offer = e.candidate == null ? alicePeerConnection.localDescription : e.currentTarget.localDescription;
 
     localOffer.value = encodeMessage(offer);
-    localOfferDownload.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(localOffer.value);
     ws.send(localOffer.value);
 });
 
@@ -55,7 +55,6 @@ bobPeerConnection.addEventListener('icecandidate', (e) => {
     const answer = e.candidate == null ? bobPeerConnection.localDescription : e.currentTarget.localDescription;
 
     localAnswer.value = encodeMessage(answer);
-    remoteOfferDownload.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(localAnswer.value);
     ws.send(localAnswer.value);
 });
 
@@ -71,6 +70,8 @@ alicePeerConnection.addEventListener('addstream', gotLocalMediaStream);
 bobPeerConnection.addEventListener('addstream', gotRemoteMediaStream);
 
 createBtn.addEventListener('click', async () => {
+    localSection.style.display = 'block';
+
     const mediaStream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
     alicePeerConnection.addStream(mediaStream);
     localVideo.srcObject = mediaStream;
@@ -101,30 +102,3 @@ offerRecdBtn.addEventListener('click', async () => {
     const answerDesc = await bobPeerConnection.createAnswer();
     await bobPeerConnection.setLocalDescription(answerDesc)
 });
-
-remoteOfferInput.addEventListener('change', () => {
-    const [file] = remoteOfferInput.files;
-
-    if (file) {
-        const reader = new FileReader();
-        reader.readAsText(file, "UTF-8");
-        reader.onload = (evt) => {
-            remoteOffer.value = evt.target.result;
-            offerRecdBtn.click();
-        }
-    }
-})
-
-remoteAnswerInput.addEventListener('change', () => {
-    const [file] = remoteAnswerInput.files;
-
-    if (file) {
-        const reader = new FileReader();
-        reader.readAsText(file, "UTF-8");
-        reader.onload = (evt) => {
-            remoteAnswer.value = evt.target.result;
-            answerRecdBtn.click();
-        }
-    }
-})
-

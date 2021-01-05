@@ -13,30 +13,35 @@
 <h3>Create a room</h3>
 <button id="createBtn">ALICE: Create</button>
 <hr>
-<h3>ALICE: Send your local offer to BOB (readonly)</h3>
-<textarea id="localOffer" readonly></textarea>
-<div><a id="localOfferDownload" download="offer" title="offer">Download Offer</a></div>
-<br>
-<h3>Then, paste the "answer" you received or just select the file</h3>
-<textarea id="remoteAnswer"></textarea>
-<div><input id="remoteAnswerInput" type="file" accept=".txt"></div>
-<br>
-<br>
-<button id="answerRecdBtn">Okay, I pasted it.</button>
+<section id="localSection" style="display:none">
+    <h3>ALICE: Your local "offer" to BOB (readonly)</h3>
+    <textarea id="localOffer" readonly></textarea>
+    <br>
+    <h3>The "answer" you received</h3>
+    <textarea id="remoteAnswer"></textarea>
+    <br>
+    <button id="answerRecdBtn">Okay</button>
+    <hr>
+</section>
+<section id="remoteSection" style="display:none">
+    <h3>BOB: The "offer" you received</h3>
+    <textarea id="remoteOffer"></textarea>
+    <br>
+    <br>
+    <h3>Your local "answer" to ALICE (readonly)</h3>
+    <textarea id="localAnswer" readonly></textarea>
+    <br>
+    <button id="offerRecdBtn">Okay</button>
+    <hr>
+</section>
+<figure>
+    <figcaption>LOCAL VIDEO</figcaption>
+    <video id="localVideo" autoplay playsinline></video>
+</figure>
 <hr>
-<h3>BOB: Paste the "offer" you received or just select the file</h3>
-<textarea id="remoteOffer"></textarea>
-<div><input id="remoteOfferInput" type="file" accept=".txt"></div>
-<br>
-<br>
-<button id="offerRecdBtn">Okay, I pasted it.</button>
-<h3>Then, send your local answer to ALICE (readonly)</h3>
-<textarea id="localAnswer" readonly></textarea>
-<div><a id="remoteOfferDownload" download="answer">Download Answer</a></div>
-<hr>
-<label for="localVideo">LOCAL</label>
-<video id="localVideo" autoplay playsinline></video>
-<label for="remoteVideo">REMOTE</label>
-<video id="remoteVideo" autoplay playsinline></video>
+<figure>
+    <figcaption>REMOTE VIDEO</figcaption>
+    <video id="remoteVideo" autoplay playsinline></video>
+</figure>
 </body>
 </html>
