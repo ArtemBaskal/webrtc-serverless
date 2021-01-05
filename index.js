@@ -6,8 +6,16 @@ const cfg = {
         {url: 'stun:stun2.l.google.com:19302'},
         {url: 'stun:stun3.l.google.com:19302'},
         {url: 'stun:stun4.l.google.com:19302'},
+        {
+            urls: 'turn:numb.viagenie.ca',
+            credential: 'muazkh',
+            username: 'webrtc@live.com'
+        },
     ]
 };
+
+const encodeMessage = (message) => JSON.stringify(message);
+const decodeMessage = (rawMessage) => JSON.parse(rawMessage);
 
 const alicePeerConnection = new RTCPeerConnection(cfg);
 const bobPeerConnection = new RTCPeerConnection(cfg);
@@ -16,7 +24,7 @@ alicePeerConnection.addEventListener('icecandidate', (e) => {
     /* FIXME test this */
     const offer = e.candidate == null ? alicePeerConnection.localDescription : e.currentTarget.localDescription;
 
-    localOffer.value = JSON.stringify(offer);
+    localOffer.value = encodeMessage(offer);
     localOfferDownload.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(localOffer.value);
 });
 
@@ -24,7 +32,7 @@ bobPeerConnection.addEventListener('icecandidate', (e) => {
     /* FIXME test this */
     const answer = e.candidate == null ? bobPeerConnection.localDescription : e.currentTarget.localDescription;
 
-    localAnswer.value = JSON.stringify(answer);
+    localAnswer.value = encodeMessage(answer);
     remoteOfferDownload.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(localAnswer.value);
 });
 
@@ -51,7 +59,7 @@ createBtn.addEventListener('click', async () => {
 answerRecdBtn.addEventListener('click', () => {
     const answer = remoteAnswer.value;
     try {
-        const answerDesc = new RTCSessionDescription(JSON.parse(answer))
+        const answerDesc = new RTCSessionDescription(decodeMessage(answer))
         alicePeerConnection.setRemoteDescription(answerDesc);
     } catch (e) {
         console.error(e);
@@ -60,7 +68,7 @@ answerRecdBtn.addEventListener('click', () => {
 
 offerRecdBtn.addEventListener('click', async () => {
     const offer = remoteOffer.value;
-    const offerDesc = new RTCSessionDescription(JSON.parse(offer))
+    const offerDesc = new RTCSessionDescription(decodeMessage(offer))
     await bobPeerConnection.setRemoteDescription(offerDesc)
 
     const mediaStream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
