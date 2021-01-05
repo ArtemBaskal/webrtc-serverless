@@ -1,0 +1,25 @@
+{
+  "name": "webrtc-serverless",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "PROD=true node signaling.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArtemBaskal/webrtc-serverless.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ArtemBaskal/webrtc-serverless/issues"
+  },
+  "homepage": "https://github.com/ArtemBaskal/webrtc-serverless#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "ws": "^7.4.2"
+  },
+  "devDependencies": {}
+}

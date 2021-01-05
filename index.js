@@ -20,12 +20,34 @@ const decodeMessage = (rawMessage) => JSON.parse(rawMessage);
 const alicePeerConnection = new RTCPeerConnection(cfg);
 const bobPeerConnection = new RTCPeerConnection(cfg);
 
+const ws = new WebSocket("wss://cryptic-savannah-19510.herokuapp.com/");
+
+const REQUEST_TYPE_TO_CALLBACK_MAP = {
+    offer: (data) => {
+        remoteOffer.value = data;
+        // offerRecdBtn.click();
+    },
+    answer: (data) => {
+        remoteAnswer.value = data;
+        // answerRecdBtn.click();
+    }
+}
+
+ws.onmessage = (event) => {
+    const {data} = event;
+    console.log(`Received: ${data}`);
+
+    const {type} = decodeMessage(data);
+    REQUEST_TYPE_TO_CALLBACK_MAP[type](data);
+};
+
 alicePeerConnection.addEventListener('icecandidate', (e) => {
     /* FIXME test this */
     const offer = e.candidate == null ? alicePeerConnection.localDescription : e.currentTarget.localDescription;
 
     localOffer.value = encodeMessage(offer);
     localOfferDownload.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(localOffer.value);
+    ws.send(localOffer.value);
 });
 
 bobPeerConnection.addEventListener('icecandidate', (e) => {
@@ -34,6 +56,7 @@ bobPeerConnection.addEventListener('icecandidate', (e) => {
 
     localAnswer.value = encodeMessage(answer);
     remoteOfferDownload.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(localAnswer.value);
+    ws.send(localAnswer.value);
 });
 
 const gotLocalMediaStream = (event) => {
