@@ -26,11 +26,11 @@ const REQUEST_TYPE_TO_CALLBACK_MAP = {
     offer: (data) => {
         remoteOffer.value = data;
         remoteSection.style.display = 'block';
-        // offerRecdBtn.click();
+        offerRecdBtn.click();
     },
     answer: (data) => {
         remoteAnswer.value = data;
-        // answerRecdBtn.click();
+        answerRecdBtn.click();
     }
 }
 
