@@ -60,7 +60,7 @@ bobPeerConnection.addEventListener('icecandidate', (e) => {
 });
 
 const gotLocalMediaStream = (event) => {
-    localVideo.srcObject = event.stream;
+    remoteVideo.srcObject = event.stream;
 };
 
 const gotRemoteMediaStream = (event) => {
@@ -95,8 +95,8 @@ offerRecdBtn.addEventListener('click', async () => {
     await bobPeerConnection.setRemoteDescription(offerDesc)
 
     const mediaStream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
-    /* FIXME camera display for Alice */
     bobPeerConnection.addStream(mediaStream);
+    localVideo.srcObject = mediaStream;
 
     const answerDesc = await bobPeerConnection.createAnswer();
     await bobPeerConnection.setLocalDescription(answerDesc)
