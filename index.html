@@ -25,6 +25,11 @@
     <textarea id="dataChannelSender"></textarea>
     <br>
     <button id="dataChannelSenderBtn">Send</button>
+    <h3>Data channel file sender</h3>
+    <input type="file" id="dataChannelFileSender" style="display:none">
+    <br>
+    <button id="dataChannelFileSenderBtn">Select File</button>
+    <progress id="sendProgress" max="0" value="0"></progress>
     <hr>
 </section>
 <section id="remoteSection" style="display:none">
@@ -39,6 +44,8 @@
     <br>
     <h3>Data channel receiver (readonly)</h3>
     <textarea id="sendDataChannelReceiver" readonly></textarea>
+    <hr>
+    <a id="dataChannelFileDownloadLink"></a>
     <hr>
 </section>
 <figure>
