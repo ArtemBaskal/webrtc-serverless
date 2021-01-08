@@ -21,6 +21,31 @@ const main = () => {
     const alicePeerConnection = new RTCPeerConnection(cfg);
     const bobPeerConnection = new RTCPeerConnection(cfg);
 
+    const onSendChannelStateChange = (e) => {
+        const readyState = e.target.readyState;
+        console.log('Send channel state is: ' + readyState);
+    };
+
+    const dataConstraint = null;
+    const sendChannel = alicePeerConnection.createDataChannel('sendDataChannel', dataConstraint);
+    sendChannel.addEventListener('open', onSendChannelStateChange);
+    sendChannel.addEventListener('close', onSendChannelStateChange);
+    dataChannelSenderBtn.addEventListener('click', () => {
+        sendChannel.send(dataChannelSender.value);
+    })
+
+    bobPeerConnection.addEventListener('datachannel',({channel}) => {
+        console.log('Receive Channel Callback');
+
+        channel.addEventListener('message', (event) => {
+            console.log('Received Message', event.data);
+            sendDataChannelReceiver.value = event.data;
+        });
+
+        channel.addEventListener('open', onSendChannelStateChange);
+        channel.addEventListener('close', onSendChannelStateChange);
+    });
+
     const ws = new WebSocket("wss://wss-signaling.herokuapp.com/");
 
     const REQUEST_TYPE_TO_CALLBACK_MAP = {
@@ -35,16 +60,16 @@ const main = () => {
         }
     }
 
-    ws.onmessage = (event) => {
+    ws.addEventListener('message', (event) => {
         const {data} = event;
         console.log(`Received: ${data}`);
 
         const {type} = decodeMessage(data);
         REQUEST_TYPE_TO_CALLBACK_MAP[type](data);
-    };
+    });
 
     alicePeerConnection.addEventListener('icecandidate', (e) => {
-        /* FIXME test this */
+        /* FIXME test this, addIceCandidate? */
         const offer = e.candidate == null ? alicePeerConnection.localDescription : e.currentTarget.localDescription;
 
         localOffer.value = encodeMessage(offer);
