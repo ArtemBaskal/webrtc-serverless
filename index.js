@@ -1,8 +1,24 @@
 const FILE_DATA_CHANNEL_BINARY_TYPE = 'arraybuffer';
 const MESSAGES_CHANNEL_NAME = 'sendDataChannel';
 const END_OF_FILE_MESSAGE = 'EOF';
+const QUERY_PARAM_ROOM_NAME = 'room';
 
-const main = () => {
+const REQUEST_TYPE_TO_CALLBACK_MAP = {
+    offer: (data) => {
+        remoteOffer.value = data;
+        remoteSection.style.display = 'block';
+        createBtn.style.display = 'none';
+        // offerRecdBtn.click();
+    },
+    answer: (data) => {
+        remoteAnswer.value = data;
+        // answerRecdBtn.click();
+    }
+};
+
+const generateQueryParam = (queryParamKey, queryParamValue) => new URLSearchParams({[queryParamKey]: queryParamValue}).toString();
+
+const main = (room) => {
     const mediaStreamConstraints = {audio: true, video: {width: 640, height: 360}};
     const cfg = {
         'iceServers': [
@@ -139,19 +155,8 @@ const main = () => {
         }
     );
 
-    const ws = new WebSocket("wss://wss-signaling.herokuapp.com/");
-
-    const REQUEST_TYPE_TO_CALLBACK_MAP = {
-        offer: (data) => {
-            remoteOffer.value = data;
-            remoteSection.style.display = 'block';
-            // offerRecdBtn.click();
-        },
-        answer: (data) => {
-            remoteAnswer.value = data;
-            // answerRecdBtn.click();
-        }
-    }
+    const roomQueryParam = generateQueryParam(QUERY_PARAM_ROOM_NAME, room);
+    const ws = new WebSocket(`wss://wss-signaling.herokuapp.com/${roomQueryParam && `?${roomQueryParam}`}`);
 
     ws.addEventListener('message', (event) => {
         const {data} = event;
@@ -235,7 +240,23 @@ const main = () => {
 };
 
 try {
-    main();
+    /* TODO get rooms amount from server? */
+    Array.from(({length: 3}),
+        (_, idx) => idx + 1)
+        .map((idx) => {
+            const room = idx.toString();
+
+            const option = new Option(room, room);
+            roomSelect.append(option);
+        });
+
+    roomSelect.addEventListener('change',(e) => {
+        const room = e.target.value;
+        createBtn.style.visibility = 'visible';
+        roomSelect.style.display = 'none';
+
+        main(room);
+    });
 } catch (err) {
     console.log(err);
 }

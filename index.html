@@ -11,7 +11,12 @@
 </head>
 <body>
 <h3>Create a room</h3>
-<button id="createBtn">ALICE: Create</button>
+<div>
+    <select id="roomSelect">
+        <option disabled selected>Select room</option>
+    </select>
+    <button id="createBtn" style="visibility:hidden">ALICE: Create</button>
+</div>
 <hr>
 <section id="localSection" style="display:none">
     <h3>ALICE: Your local "offer" to BOB (readonly)</h3>
@@ -21,7 +26,7 @@
     <textarea id="remoteAnswer"></textarea>
     <br>
     <button id="answerRecdBtn">Okay</button>
-    <h3>Data channel sender</h3>
+    <h3>Data channel text sender</h3>
     <textarea id="dataChannelSender"></textarea>
     <br>
     <button id="dataChannelSenderBtn">Send</button>
@@ -42,9 +47,10 @@
     <br>
     <button id="offerRecdBtn">Okay</button>
     <br>
-    <h3>Data channel receiver (readonly)</h3>
+    <h3>Data channel text receiver (readonly)</h3>
     <textarea id="sendDataChannelReceiver" readonly></textarea>
     <hr>
+    <h3>Data channel file receiver (readonly)</h3>
     <a id="dataChannelFileDownloadLink"></a>
     <hr>
 </section>
