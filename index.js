@@ -54,6 +54,7 @@ const main = () => {
         https://www.ibm.com/support/knowledgecenter/SSEQVQ_8.1.10/client/c_cmd_filespecsyntax.html
         */
         const sendFileChannel = alicePeerConnection.createDataChannel(name, dataConstraint);
+        sendFileChannel.binaryType = FILE_DATA_CHANNEL_BINARY_TYPE;
         /*
          Firefox cannot send a message larger than 16 Kbytes to Chrome
          https://viblast.com/blog/2015/2/5/webrtc-data-channel-message-size/#blog-body:~:text=Firefox%20cannot%20send%20a%20message%20larger%20than%2016%20Kbytes%20to%20Chrome
