@@ -29,8 +29,8 @@ const main = (room) => {
             {url: 'stun:stun4.l.google.com:19302'},
             {
                 urls: 'turn:numb.viagenie.ca',
-                credential: 'muazkh',
-                username: 'webrtc@live.com'
+                credential: '9u7prU:2}R{Sut~.)d[bP7,;Pgc\'Pa',
+                username: 'fkrveacbukypqsqyaq@miucce.com'
             },
         ]
     };
@@ -115,43 +115,43 @@ const main = (room) => {
     });
 
     bobPeerConnection.addEventListener('datachannel', ({channel}) => {
-        console.log('Receive Channel Callback');
+            console.log('Receive Channel Callback');
 
-        if (channel.label === MESSAGES_CHANNEL_NAME) {
-            channel.addEventListener('message', (event) => {
-                console.log('Received Message', event.data);
-                sendDataChannelReceiver.value = event.data;
-            });
-        } else {
-            const fileName = channel.label;
-            let receivedFileBuffer = [];
-            let receivedFileSize = 0;
+            if (channel.label === MESSAGES_CHANNEL_NAME) {
+                channel.addEventListener('message', (event) => {
+                    console.log('Received Message', event.data);
+                    sendDataChannelReceiver.value = event.data;
+                });
+            } else {
+                const fileName = channel.label;
+                let receivedFileBuffer = [];
+                let receivedFileSize = 0;
 
-            channel.binaryType = FILE_DATA_CHANNEL_BINARY_TYPE;
+                channel.binaryType = FILE_DATA_CHANNEL_BINARY_TYPE;
 
-            channel.addEventListener('message', (event) => {
-                if (event.data === END_OF_FILE_MESSAGE) {
-                    const receivedFile = new Blob(receivedFileBuffer);
-                    receivedFileBuffer = [];
-                    receivedFileSize = 0;
+                channel.addEventListener('message', (event) => {
+                    if (event.data === END_OF_FILE_MESSAGE) {
+                        const receivedFile = new Blob(receivedFileBuffer);
+                        receivedFileBuffer = [];
+                        receivedFileSize = 0;
 
-                    const a = dataChannelFileDownloadLink;
-                    const url = URL.createObjectURL(receivedFile);
-                    a.href = url;
-                    a.download = fileName;
-                    a.textContent = `Click to download ${fileName} (${receivedFile.size} bytes)`;
-                    // a.click();
-                    // URL.revokeObjectURL(url);
-                    // a.remove()
-                    channel.close();
-                } else {
-                    receivedFileBuffer.push(event.data);
-                    receivedFileSize += event.data.byteLength;
-                }
-            });
-        }
-        channel.addEventListener('open', onSendChannelStateChange);
-        channel.addEventListener('close', onSendChannelStateChange);
+                        const a = dataChannelFileDownloadLink;
+                        const url = URL.createObjectURL(receivedFile);
+                        a.href = url;
+                        a.download = fileName;
+                        a.textContent = `Click to download ${fileName} (${receivedFile.size} bytes)`;
+                        // a.click();
+                        // URL.revokeObjectURL(url);
+                        // a.remove()
+                        channel.close();
+                    } else {
+                        receivedFileBuffer.push(event.data);
+                        receivedFileSize += event.data.byteLength;
+                    }
+                });
+            }
+            channel.addEventListener('open', onSendChannelStateChange);
+            channel.addEventListener('close', onSendChannelStateChange);
         }
     );
 
@@ -250,7 +250,7 @@ try {
             roomSelect.append(option);
         });
 
-    roomSelect.addEventListener('change',(e) => {
+    roomSelect.addEventListener('change', (e) => {
         const room = e.target.value;
         createBtn.style.visibility = 'visible';
         roomSelect.style.display = 'none';
