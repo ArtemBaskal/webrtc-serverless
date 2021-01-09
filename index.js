@@ -213,9 +213,8 @@ const main = (room) => {
     });
 
     answerRecdBtn.addEventListener('click', async () => {
-        const answer = remoteAnswer.value;
         try {
-            const answerDesc = new RTCSessionDescription(decodeMessage(answer))
+            const answerDesc = decodeMessage(remoteAnswer.value)
             await alicePeerConnection.setRemoteDescription(answerDesc);
         } catch (e) {
             console.error(e);
@@ -223,8 +222,7 @@ const main = (room) => {
     })
 
     offerRecdBtn.addEventListener('click', async () => {
-        const offer = remoteOffer.value;
-        const offerDesc = new RTCSessionDescription(decodeMessage(offer))
+        const offerDesc = decodeMessage(remoteOffer.value)
         await bobPeerConnection.setRemoteDescription(offerDesc)
 
         const mediaStream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
