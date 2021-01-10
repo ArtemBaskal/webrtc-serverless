@@ -131,7 +131,8 @@ const main = (room) => {
 
                 channel.addEventListener('message', (event) => {
                     if (event.data === END_OF_FILE_MESSAGE) {
-                        const receivedFile = new Blob(receivedFileBuffer);
+                        /* FIXME does this understand type application/sdp? */
+                        const receivedFile = new Blob(receivedFileBuffer,/* {type: 'application/sdp'}*/);
                         receivedFileBuffer = [];
                         receivedFileSize = 0;
 
@@ -167,18 +168,20 @@ const main = (room) => {
     });
 
     alicePeerConnection.addEventListener('icecandidate', (e) => {
-        /* FIXME test this, addIceCandidate?, fix negotiation? https://github.com/Dornhoth/video-chat-webrtc/blob/master/client/index.js */
-        const offer = e.candidate == null ? alicePeerConnection.localDescription : e.currentTarget.localDescription;
+        console.log('icecandidate', e.candidate);
+        /* FIXME fix negotiation https://github.com/Dornhoth/video-chat-webrtc/blob/master/client/index.js https://w3c.github.io/webrtc-pc/#perfect-negotiation-example */
+        const offer = e.target.localDescription;
 
-        localOffer.value = encodeMessage(offer);
+        localOffer.value = encodeMessage(offer.toJSON());
         ws.send(localOffer.value);
     });
 
     bobPeerConnection.addEventListener('icecandidate', (e) => {
-        /* FIXME test this */
-        const answer = e.candidate == null ? bobPeerConnection.localDescription : e.currentTarget.localDescription;
+        console.log('icecandidate', e.candidate);
+        /* FIXME send new candidates instead of new description */
+        const answer = e.target.localDescription;
 
-        localAnswer.value = encodeMessage(answer);
+        localAnswer.value = encodeMessage(answer.toJSON());
         ws.send(localAnswer.value);
     });
 
@@ -209,7 +212,7 @@ const main = (room) => {
         localVideo.srcObject = mediaStream;
 
         const desc = await alicePeerConnection.createOffer();
-        await alicePeerConnection.setLocalDescription(desc)
+        await alicePeerConnection.setLocalDescription(desc);
     });
 
     answerRecdBtn.addEventListener('click', async () => {
@@ -223,7 +226,8 @@ const main = (room) => {
 
     offerRecdBtn.addEventListener('click', async () => {
         const offerDesc = decodeMessage(remoteOffer.value)
-        await bobPeerConnection.setRemoteDescription(offerDesc)
+        /* FIXME add ice candidate handler */
+        await bobPeerConnection.setRemoteDescription(offerDesc);
 
         const mediaStream = await navigator.mediaDevices.getUserMedia(mediaStreamConstraints);
         mediaStream.getTracks().forEach((track) => {
@@ -233,7 +237,7 @@ const main = (room) => {
         localVideo.srcObject = mediaStream;
 
         const answerDesc = await bobPeerConnection.createAnswer();
-        await bobPeerConnection.setLocalDescription(answerDesc)
+        await bobPeerConnection.setLocalDescription(answerDesc);
     });
 };
 
