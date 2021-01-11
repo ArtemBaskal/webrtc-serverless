@@ -6,26 +6,17 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>WebRTC</title>
-    <script src="adapter.js" defer></script>
-    <script src="index.js" defer></script>
 </head>
 <body>
-<h3>Create a room</h3>
+<h3>Video call</h3>
 <div>
     <select id="roomSelect">
         <option disabled selected>Select room</option>
     </select>
-    <button id="createBtn" style="visibility:hidden">ALICE: Create</button>
+    <button id="startBtn">Start</button>
 </div>
 <hr>
 <section id="localSection" style="display:none">
-    <h3>ALICE: Your local "offer" to BOB (readonly)</h3>
-    <textarea id="localOffer" readonly></textarea>
-    <br>
-    <h3>The "answer" you received</h3>
-    <textarea id="remoteAnswer"></textarea>
-    <br>
-    <button id="answerRecdBtn">Okay</button>
     <h3>Data channel text sender</h3>
     <textarea id="dataChannelSender"></textarea>
     <br>
@@ -38,20 +29,10 @@
     <hr>
 </section>
 <section id="remoteSection" style="display:none">
-    <h3>BOB: The "offer" you received</h3>
-    <textarea id="remoteOffer"></textarea>
-    <br>
-    <br>
-    <h3>Your local "answer" to ALICE (readonly)</h3>
-    <textarea id="localAnswer" readonly></textarea>
-    <br>
-    <button id="offerRecdBtn">Okay</button>
-    <br>
     <h3>Data channel text receiver (readonly)</h3>
     <textarea id="sendDataChannelReceiver" readonly></textarea>
-    <hr>
     <h3>Data channel file receiver (readonly)</h3>
-    <a id="dataChannelFileDownloadLink"></a>
+    <a id="dataChannelFileDownloadLink">Download link</a>
     <hr>
 </section>
 <figure>
@@ -63,5 +44,7 @@
     <figcaption>REMOTE VIDEO</figcaption>
     <video id="remoteVideo" autoplay playsinline></video>
 </figure>
+<script src="adapter.js"></script>
+<script src="index.js"></script>
 </body>
 </html>
