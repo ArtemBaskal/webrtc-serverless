@@ -124,7 +124,10 @@ const main = (room) => {
             }
         });
 
-        readSlice(FIRST_SLICE_BYTE);
+        sendFileChannel.onopen = () => {
+            const FIRST_BYTE_SLICE_NUMBER = 0;
+            readSlice(FIRST_BYTE_SLICE_NUMBER);
+        };
     });
 
     pc.addEventListener('datachannel', ({channel}) => {
@@ -170,6 +173,7 @@ const main = (room) => {
     );
 
 // call start() anytime on either end to add camera and microphone to connection
+    /* TODO add picture-in-picture for video https://developer.mozilla.org/en-US/docs/Web/API/Picture-in-Picture_API */
     const start = async () => {
         startBtn.disabled = true;
         polite = false;
@@ -286,5 +290,9 @@ roomSelect.addEventListener('change', (e) => {
     roomSelect.disabled = true;
     startBtn.disabled = false;
 
-    main(room);
+    try {
+        main(room);
+    } catch (err) {
+        console.error(err);
+    }
 });
