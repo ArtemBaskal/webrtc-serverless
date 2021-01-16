@@ -90,8 +90,6 @@ const main = (room) => {
          Messages smaller than 16kiB can be sent without concern, as all major user agents handle them the same way. Beyond that, things get more complicated.
          https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Using_data_channels#understanding_message_size_limits:~:text=Messages%20smaller%20than%2016kiB%20can%20be,Beyond%20that%2C%20things%20get%20more%20complicated.
         */
-        const CHUNK_SIZE = 2 ** 14;
-        const FIRST_SLICE_BYTE = 0;
 
         const fileReader = new FileReader();
         let offset = 0;
@@ -104,6 +102,10 @@ const main = (room) => {
             console.log('File reading aborted: ', event);
         });
 
+        /* TODO find out optimal buffer size */
+        // const CHUNK_SIZE = 2 ** 14;
+        const CHUNK_SIZE = pc.sctp?.maxMessageSize || 65535;
+
         const readSlice = (byteOffset) => {
             console.log('readSlice', byteOffset);
             const slice = file.slice(offset, byteOffset + CHUNK_SIZE);
@@ -112,17 +114,22 @@ const main = (room) => {
 
         fileReader.addEventListener('load', (e) => {
             console.log('FileReader.onload', e);
-            sendFileChannel.send(e.target.result);
+            const buffer = e.target.result;
+            sendFileChannel.send(buffer);
 
-            offset += e.target.result.byteLength;
+            offset += buffer.byteLength;
             sendProgress.value = offset;
 
-            if (offset < file.size) {
-                readSlice(offset);
-            } else {
+            if (offset >= file.size) {
                 sendFileChannel.send(END_OF_FILE_MESSAGE);
+                sendFileChannel.close();
+            } else if (sendFileChannel.bufferedAmount < CHUNK_SIZE / 2) {
+                readSlice(offset);
             }
         });
+
+        sendFileChannel.bufferedAmountLowThreshold = CHUNK_SIZE / 2;
+        sendFileChannel.addEventListener('bufferedamountlow', () => readSlice(offset));
 
         sendFileChannel.onopen = () => {
             const FIRST_BYTE_SLICE_NUMBER = 0;
