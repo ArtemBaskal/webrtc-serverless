@@ -101,8 +101,8 @@ const main = (ws) => {
 
         /* TODO find out optimal buffer size */
         // 2 ** 16 === 65535;
-        console.log('pc.sctp.maxMessageSize', pc.sctp.maxMessageSize);
         const CHUNK_SIZE = pc.sctp?.maxMessageSize || 65535;
+        console.log('CHUNK_SIZE=', CHUNK_SIZE);
 
         const readSlice = (byteOffset) => {
             console.log('readSlice', byteOffset);
