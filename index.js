@@ -20,10 +20,7 @@ const MESSAGES_CHANNEL_NAME = 'sendDataChannel';
 const END_OF_FILE_MESSAGE = 'EOF';
 const generateQueryParam = (queryParamKey, queryParamValue) => new URLSearchParams({[queryParamKey]: queryParamValue}).toString();
 
-const main = (room) => {
-    const roomQueryParam = generateQueryParam(QUERY_PARAM_ROOM_NAME, room);
-    const ws = new WebSocket(`wss://wss-signaling.herokuapp.com/${roomQueryParam && `?${roomQueryParam}`}`);
-
+const main = (ws) => {
     let polite = true;
     const signaling = new SignalingChannel(ws);
 
@@ -103,7 +100,8 @@ const main = (room) => {
         });
 
         /* TODO find out optimal buffer size */
-        // const CHUNK_SIZE = 2 ** 14;
+        // 2 ** 16 === 65535;
+        console.log('pc.sctp.maxMessageSize', pc.sctp.maxMessageSize);
         const CHUNK_SIZE = pc.sctp?.maxMessageSize || 65535;
 
         const readSlice = (byteOffset) => {
@@ -298,7 +296,11 @@ roomSelect.addEventListener('change', (e) => {
     startBtn.disabled = false;
 
     try {
-        main(room);
+        const roomQueryParam = generateQueryParam(QUERY_PARAM_ROOM_NAME, room);
+        const ws = new WebSocket(`wss://wss-signaling.herokuapp.com/${roomQueryParam && `?${roomQueryParam}`}`);
+        ws.onopen = () => {
+            main(ws);
+        }
     } catch (err) {
         console.error(err);
     }
