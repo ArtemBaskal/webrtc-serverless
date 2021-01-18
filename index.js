@@ -239,8 +239,18 @@ const main = (ws) => {
         }
     };
 
-    signaling.onmessage = async ({data, data: {description, candidate}}) => {
+    signaling.onmessage = async ({data, data: {description, candidate, getRemoteMedia}}) => {
         console.log(data);
+
+        if (getRemoteMedia) {
+            if (pc.getSenders().length === 0) {
+                await start()
+            } else {
+                pc.dispatchEvent(new Event('negotiationneeded'));
+            }
+
+            return;
+        }
 
         try {
             if (description) {
