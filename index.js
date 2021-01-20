@@ -23,6 +23,7 @@ const generateQueryParam = (queryParamKey, queryParamValue) => new URLSearchPara
 const main = (ws) => {
     let polite = true;
     const signaling = new SignalingChannel(ws);
+    signaling.send({ getRemoteMedia: true });
 
     const constraints = {audio: true, video: true};
     const configuration = {
@@ -189,7 +190,11 @@ const main = (ws) => {
                 pc.addTrack(track, stream);
             });
 
-            localVideo.srcObject = stream;
+            const videoStream = new MediaStream();
+            const [videoTrack] = stream.getVideoTracks();
+            videoStream.addTrack(videoTrack);
+
+            localVideo.srcObject = videoStream;
         } catch (err) {
             console.error(err);
         }
@@ -197,14 +202,14 @@ const main = (ws) => {
 
     startBtn.onclick = start;
 
-    pc.ontrack = ({track, streams}) => {
+    pc.ontrack = ({track, streams: [stream]}) => {
         // once media for a remote track arrives, show it in the remote video element
         track.onunmute = () => {
             // don't set srcObject again if it is already set.
             if (remoteVideo.srcObject) {
                 return;
             }
-            remoteVideo.srcObject = streams[0];
+            remoteVideo.srcObject = stream;
         };
     };
 
@@ -289,7 +294,7 @@ const main = (ws) => {
 };
 
 /* TODO get rooms amount from server? */
-Array.from(({length: 3}),
+Array.from(({length: 10}),
     (_, idx) => idx + 1)
     .map((idx) => {
         const room = idx.toString();
