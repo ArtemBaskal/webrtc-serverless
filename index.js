@@ -308,13 +308,17 @@ startBtn.disabled = true;
 roomSelect.addEventListener('change', (e) => {
     const room = e.target.value;
     roomSelect.disabled = true;
-
     try {
+        const baseURL = 'wss://wss-signaling.herokuapp.com';
         const roomQueryParam = generateQueryParam(QUERY_PARAM_ROOM_NAME, room);
-        const ws = new WebSocket(`wss://wss-signaling.herokuapp.com/${roomQueryParam && `?${roomQueryParam}`}`);
+        const url = new URL(`${roomQueryParam && `?${roomQueryParam}`}`, baseURL).toString();
+        const ws = new WebSocket(url);
         ws.onopen = () => {
             main(ws);
             startBtn.disabled = false;
+        }
+        ws.onclose = (e) => {
+            console.log('WS CLOSED', e);
         }
     } catch (err) {
         console.error(err);
