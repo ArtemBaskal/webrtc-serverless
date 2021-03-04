@@ -312,7 +312,7 @@ roomSelect.addEventListener('change', (e) => {
         const baseURL = 'wss://wss-signaling.herokuapp.com';
         const roomQueryParam = generateQueryParam(QUERY_PARAM_ROOM_NAME, room);
         const url = new URL(`${roomQueryParam && `?${roomQueryParam}`}`, baseURL).toString();
-        const ws = new WebSocket(url);
+        const ws = new WebSocket(url, window.protocols);
         ws.onopen = () => {
             main(ws);
             startBtn.disabled = false;
